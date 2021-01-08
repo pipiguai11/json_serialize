@@ -5,10 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PrintUtil {
 
-    public static void printlnResult(String message, Object o){
-        log.info("开始打印【{}】的输出结果",message);
+    public static void printlnResult(String methodName, String content , Object o){
         System.out.println();
-        System.out.println(o);
+        System.out.println("调用方法：【" + methodName + "】");
+        System.out.println("方法描述：【" + content + "】");
+        System.out.println("方法输出： " + o);
         System.out.println();
     }
 

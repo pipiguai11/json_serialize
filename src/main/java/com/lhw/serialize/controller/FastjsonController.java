@@ -17,4 +17,10 @@ public class FastjsonController {
         return "success";
     }
 
+    @GetMapping("/parse/object")
+    public String parseObject(){
+        fastJsonService.parseJsonArray3();
+        return "success";
+    }
+
 }
