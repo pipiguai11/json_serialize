@@ -13,9 +13,11 @@ public class JsonDataLoad {
     @Value("${filePath}")
     private String filePath ;
 
+    private static final String TEMPLATE_FILE_PATH = "templates/file/jsonData.txt";
+
     @Bean
     public JsonMessage jsonMessage() throws IOException {
-        return new JsonMessage(filePath);
+        return new JsonMessage(TEMPLATE_FILE_PATH);
     }
 
 }

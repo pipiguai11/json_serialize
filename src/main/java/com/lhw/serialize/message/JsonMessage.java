@@ -16,7 +16,7 @@ public class JsonMessage {
     public JsonMessage(String filePath) throws IOException {
         log.info("初始化json数据");
         if (Strings.isBlank(JSON_DATA)){
-            JSON_DATA = FileUtil.readStringFromFile(filePath);
+            JSON_DATA = FileUtil.readStringFromTemplates(filePath);
         }
     }
 
