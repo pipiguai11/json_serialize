@@ -1,9 +1,12 @@
 package com.lhw.serialize.util;
 
+import org.springframework.core.io.ClassPathResource;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class FileUtil {
 
@@ -34,6 +37,27 @@ public class FileUtil {
             if (in != null){
                 in.close();
             }
+        }
+        return "";
+    }
+
+    /**
+     * 从templates/file文件夹中读取文件
+     * @param path
+     * @return
+     */
+    public static String readStringFromTemplates(String path){
+        try {
+            InputStream in = new ClassPathResource(path).getInputStream();
+            byte[] b = new byte[4];
+            StringBuffer sb = new StringBuffer();
+            int len = -1;
+            while ((len = in.read(b)) != -1){
+                sb.append(new String(b, StandardCharsets.UTF_8));
+            }
+            return sb.toString();
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return "";
     }
