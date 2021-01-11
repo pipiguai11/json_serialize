@@ -61,6 +61,9 @@ public class FastjsonServiceImpl implements IFastJsonService {
         PrintUtil.printlnResult("JSON.parseArray","解析json字符串数组，并转成java对象list",jsonMessageObjects);
     }
 
+    /**
+     * 简单解析一个json，通过getBoolean方法获取布尔值
+     */
     @Override
     public void parseJsonArray2() {
         String json = "{\"boo\":true}";
@@ -69,18 +72,20 @@ public class FastjsonServiceImpl implements IFastJsonService {
         JSONArray temp2 = JSON.parseArray(jsons);
         temp2.forEach(t ->{
             JSONObject jb = (JSONObject)t;
-            System.out.println(jb.getBoolean("boo1"));
+            System.out.println(jb.getBoolean("boo1"));  //true，false
         });
         System.out.println("-------------------------------");
-        System.out.println(temp.getBoolean("boo"));
-        System.out.println(temp2.getJSONObject(1).getBoolean("boo2"));
+        System.out.println(temp.getBoolean("boo"));  //true
+        System.out.println(temp2.getJSONObject(1).getBoolean("boo2"));  //true
     }
 
+    /**
+     * 解析json，调用其他方法获取各种不同的类型值
+     */
     @Override
     public void parseJsonArray3() {
         System.out.println("-------------------parse array-----------------------");
         List<String> list = Arrays.asList("hanwen", "true", "1", "10086", "2021-01-08", "2.0");
-        JSON.toJSONString(list);
         String json = JSON.toJSONStringWithDateFormat(list,"yyyy-MM-dd");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -90,8 +95,8 @@ public class FastjsonServiceImpl implements IFastJsonService {
         System.out.println(" integer : " + jsonArray.getInteger(2));
         System.out.println(" bigInteger : " + jsonArray.getBigInteger(3));
         System.out.println(" date : " + sdf.format(jsonArray.getDate(4)));
-        System.out.println(" double : " + jsonArray.getDouble(5));
-        System.out.println(" float : " + jsonArray.getFloat(5));
+        System.out.println(" double : " + jsonArray.getDouble(5));  //2.0
+        System.out.println(" float : " + jsonArray.getFloat(5));  //2.0
 
 
         System.out.println("-------------------parse object---------------------");
