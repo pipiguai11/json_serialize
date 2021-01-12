@@ -13,4 +13,14 @@ public class PrintUtil {
         System.out.println();
     }
 
+    public static void compareResultPrintln(String message, Object o1, Object o2){
+        System.out.println();
+        System.out.println("------------------------------------------------------------------------");
+        System.out.println("没有任何的格式化：");
+        System.out.println(o1);
+        System.out.println("【" + message + "】操作");
+        System.out.println(o2);
+        System.out.println();
+    }
+
 }

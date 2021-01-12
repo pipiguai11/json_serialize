@@ -55,11 +55,22 @@ public class FileUtil {
             while ((len = in.read(b)) != -1){
                 sb.append(new String(b, StandardCharsets.UTF_8));
             }
+            in.close();
             return sb.toString();
         }catch (Exception e){
             e.printStackTrace();
         }
         return "";
+    }
+
+    /**
+     * 从templates/temp目录中读取文件，并返回流
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public static InputStream readInputStreamFromTemplates(String path) throws IOException {
+        return new ClassPathResource(path).getInputStream();
     }
 
 }

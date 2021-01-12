@@ -10,8 +10,12 @@ public interface IFastJsonService {
 
     void parseJsonObject();
 
-    void toJsonArray();
+    void toJsonString();
 
-    void toJsonObject();
+    void toJsonByte();
+
+    String fileToByteObjectJsonString();
+
+    void byteObjectJsonStringHandle();
 
 }

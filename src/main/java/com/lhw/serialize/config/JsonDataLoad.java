@@ -1,6 +1,6 @@
 package com.lhw.serialize.config;
 
-import com.lhw.serialize.message.JsonMessage;
+import com.lhw.serialize.message.JsonData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +16,8 @@ public class JsonDataLoad {
     private static final String TEMPLATE_FILE_PATH = "templates/file/jsonData.txt";
 
     @Bean
-    public JsonMessage jsonMessage() throws IOException {
-        return new JsonMessage(TEMPLATE_FILE_PATH);
+    public JsonData jsonMessage() throws IOException {
+        return new JsonData(TEMPLATE_FILE_PATH);
     }
 
 }
