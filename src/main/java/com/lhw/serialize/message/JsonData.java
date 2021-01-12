@@ -7,13 +7,13 @@ import org.apache.logging.log4j.util.Strings;
 import java.io.*;
 
 @Slf4j
-public class JsonMessage {
+public class JsonData {
 
     public static String JSON_DATA = "";
 
-    public JsonMessage(){}
+    public JsonData(){}
 
-    public JsonMessage(String filePath) throws IOException {
+    public JsonData(String filePath) throws IOException {
         log.info("初始化json数据");
         if (Strings.isBlank(JSON_DATA)){
             JSON_DATA = FileUtil.readStringFromTemplates(filePath);
