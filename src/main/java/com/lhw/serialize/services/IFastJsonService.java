@@ -18,4 +18,8 @@ public interface IFastJsonService {
 
     void byteObjectJsonStringHandle();
 
+    void testMySerializeConfig();
+
+    void testMyFilter();
+
 }

@@ -3,11 +3,12 @@ package com.lhw.serialize;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.serializer.*;
 import com.lhw.serialize.model.Classroom;
 import com.lhw.serialize.model.User;
 import com.lhw.serialize.util.FileUtil;
 import com.lhw.serialize.util.PrintUtil;
+import com.lhw.serialize.util.SerializeUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -160,6 +161,147 @@ class JsonSerializeApplicationTests {
         out.close();
     }
 
+    /**
+     * 自定义序列化器
+     */
+    @Test
+    void testMySerialize(){
+        init();
+        classroom.setPersonList(null);
+        classroom.setMap(null);
+        String result = JSON.toJSONString(classroom, SerializeUtil.globalInstance);
+        System.out.println(result);
+
+        String douStr = JSON.toJSONString(2.11111,SerializeUtil.globalInstance);
+        System.out.println(douStr);
+
+        String douStr2 = JSON.toJSONString(2.9,SerializeUtil.globalInstance);
+        System.out.println(douStr2);
+
+    }
+
+    /**
+     * 定制化序列化过滤属性
+     */
+    @Test
+    void testSerializeFilter(){
+        User user1 = new User("lhw",19,"hz");
+        User user2 = new User("hw",18,"gz");
+
+        //根据PropertyKey和PropertyValue来判断哪些属性需要序列化（name就是key，value就是value）
+        //当apply方法返回true时，表示该key:value需要序列化
+        PropertyFilter propertyFilter = new PropertyFilter() {
+            @Override
+            public boolean apply(Object object, String name, Object value) {
+                System.out.println("PropertyFilter 根据PropertyName和PropertyValue来判断是否序列化；");
+                System.out.println("source-----------:" + object);
+                System.out.println("name-----------:" + name);
+                System.out.println("value-----------:" + value);
+                //属性为username，且值包含字符串“hw”时进行序列化
+                if ("userName".equalsIgnoreCase(name)){
+                    String temp = (String)value;
+                    return temp.contains("hw");
+                }
+                //属性为age，且值大于18时进行序列化
+                if ("age".equals(name)){
+                    int age = (int)value;
+                    return age > 18;
+                }
+                //属性为address，且值等于“gz”时进行序列化
+                if ("address".equalsIgnoreCase(name)){
+                    String address = (String)value;
+                    return "gz".equalsIgnoreCase(address);
+                }
+                return false;
+            }
+        };
+
+        String str1 = JSON.toJSONString(user1,propertyFilter);
+        String str2 = JSON.toJSONString(user2,propertyFilter);
+        System.out.println(str1);
+        System.out.println(str2);
+        System.out.println();
+        System.out.println("----------------------------------------------------------------------------------------");
+
+        //根据key匹配并修改key值
+        //返回的字符串即为key的修改结果
+        NameFilter nameFilter = new NameFilter() {
+            @Override
+            public String process(Object object, String name, Object value) {
+                if ("username".equalsIgnoreCase(name)){
+                    return "my" + name;
+                }else if ("age".equalsIgnoreCase(name)){
+                    return name + "aaaa";
+                }else if ("address".equalsIgnoreCase(name)){
+                    return name + "zxc";
+                }
+                return name;
+            }
+        };
+
+        String nameFilterStr = JSON.toJSONString(user1,nameFilter);
+        System.out.println("原对象 ： " + user1);
+        System.out.println("nameFilter：");
+        System.out.println(nameFilterStr);
+        System.out.println();
+        System.out.println("----------------------------------------------------------------------------------------");
+
+        //根据Key匹配并修改Value值
+        //和NameFilter一样，返回的值即为修改的Value值
+        ValueFilter valueFilter = new ValueFilter() {
+            @Override
+            public Object process(Object object, String name, Object value) {
+                if ("username".equalsIgnoreCase(name)){
+                    return value + "name";
+                }else if ("age".equalsIgnoreCase(name)){
+                    return value + "age";
+                }else if ("address".equalsIgnoreCase(name)){
+                    return value + "add";
+                }
+                return value;
+            }
+        };
+
+        String valueFilterStr = JSON.toJSONString(user1,valueFilter);
+        System.out.println("原对象 ： " + user1);
+        System.out.println("ValueFilter : ");
+        System.out.println(valueFilterStr);
+        System.out.println();
+        System.out.println("----------------------------------------------------------------------------------------");
+
+        //序列化所有属性之前执行一下操作，如下在序列化之前先将address值添加before后缀
+        BeforeFilter beforeFilter = new BeforeFilter() {
+            @Override
+            public void writeBefore(Object object) {
+                System.out.println("object = " + object);
+                User u = (User)object;
+                System.out.println("user = " + u);
+                u.setAddress(u.getAddress() + "before");
+            }
+        };
+        String beforeFilterStr = JSON.toJSONString(user1,beforeFilter);
+        System.out.println("BeforeFilterStr : ");
+        System.out.println("解析后的字符串： " + beforeFilterStr);  //{"address":"hzbefore","age":19,"userName":"lhw"}，解析前先执行了该beforeFilter
+        System.out.println("原对象信息 ： " + user1);  //User(userName=lhw, age=19, address=hzbefore)
+        System.out.println();
+        System.out.println("----------------------------------------------------------------------------------------");
+
+
+        AfterFilter afterFilter = new AfterFilter() {
+            @Override
+            public void writeAfter(Object object) {
+                User u = (User)object;
+                System.out.println("user = " + u);
+                u.setAddress(u.getAddress() + "after");
+            }
+        };
+        String afterFilterStr = JSON.toJSONString(user2,afterFilter);
+        System.out.println("解析后的字符串： " + afterFilterStr);  //{"address":"gz","age":18,"userName":"hw"}，在调用afterFilter之前就解析好了
+        System.out.println("原对象信息 ： " + user2);  //User(userName=hw, age=18, address=gzafter)，解析完之后调用修改了值
+
+
+    }
+
 
     /**
      * 从template/file目录中读取文件并输出
@@ -180,6 +322,9 @@ class JsonSerializeApplicationTests {
         }
     }
 
+    /**
+     * 初始化数据
+     */
     private void init(){
         classroom = new Classroom();
         classroom.setClassName("高一一班");

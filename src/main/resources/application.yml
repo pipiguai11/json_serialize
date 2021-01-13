@@ -4,4 +4,3 @@ server:
     context-path: /json
 
 filePath: E:\日常文件\学习反馈\测试数据\jsonData.txt
-
