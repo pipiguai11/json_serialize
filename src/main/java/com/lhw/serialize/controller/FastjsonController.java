@@ -53,4 +53,16 @@ public class FastjsonController {
         return "success";
     }
 
+    @GetMapping("test/mySerialize")
+    public String testMySerialize(){
+        fastJsonService.testMySerializeConfig();
+        return "success";
+    }
+
+    @GetMapping("test/myFilter")
+    public String testMyFilter(){
+        fastJsonService.testMyFilter();
+        return "success";
+    }
+
 }

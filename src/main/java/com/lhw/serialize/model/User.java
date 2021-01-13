@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private String userName;
-    private Integer age;
+    private int age;
     private String address;
 
 }
