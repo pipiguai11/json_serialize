@@ -1,11 +1,10 @@
 package com.lhw.serialize;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.*;
 import com.alibaba.fastjson.serializer.*;
 import com.lhw.serialize.model.Classroom;
 import com.lhw.serialize.model.User;
+import com.lhw.serialize.model.User2;
 import com.lhw.serialize.util.FileUtil;
 import com.lhw.serialize.util.PrintUtil;
 import com.lhw.serialize.util.SerializeUtil;
@@ -299,6 +298,72 @@ class JsonSerializeApplicationTests {
         System.out.println("解析后的字符串： " + afterFilterStr);  //{"address":"gz","age":18,"userName":"hw"}，在调用afterFilter之前就解析好了
         System.out.println("原对象信息 ： " + user2);  //User(userName=hw, age=18, address=gzafter)，解析完之后调用修改了值
 
+
+    }
+
+    /**
+     * fastjson处理超大json文本
+     *      做了性能对比，对比用处理超大json文本的方式输出和常用的方式输出
+     *      这里用的文件不是超大json文本，而是小文件，因此常用方式更省时，还没测试超大文本
+     * @throws IOException
+     */
+    @Test
+    void testHugeFile() throws IOException {
+        JSONWriter jsonWriter = new JSONWriter(new FileWriter("E:\\temp\\" + new Random().nextInt(100) + ".txt"));
+        JSONReader jsonReader = new JSONReader(new FileReader("D:\\ideaWorkSpace\\myDemo\\json_serialize\\src\\main\\resources\\templates\\file\\jsonData.txt"));
+
+        //处理超大json数组
+        long start = System.currentTimeMillis();
+        jsonReader.startArray();
+        jsonWriter.startArray();
+        while (jsonReader.hasNext()){
+            User u = jsonReader.readObject(User.class);
+            jsonWriter.writeValue(u);
+        }
+        jsonWriter.flush();
+        jsonWriter.endArray();
+        jsonReader.endArray();
+        System.out.println("处理超大json文本用时 ：" + (System.currentTimeMillis()-start));
+
+        //性能对比
+        String json = getJsonString();
+        FileOutputStream fos = new FileOutputStream("E:\\temp\\" + new Random().nextInt(100) + ".txt");
+        long start2 = System.currentTimeMillis();
+        List<User> users = JSON.parseArray(json,User.class);
+        String result = JSON.toJSONString(users);
+        byte[] b = result.getBytes();
+        fos.write(b);
+        fos.flush();
+        System.out.println("常用用时 ：" + (System.currentTimeMillis()-start2));
+
+        //处理超大json对象
+//        jsonReader.startObject();
+//        jsonWriter.startObject();
+//        while (jsonReader.hasNext()){
+//            String key = jsonReader.readString();
+//            User u = jsonReader.readObject(User.class);
+//            jsonWriter.writeKey(key);
+//            jsonWriter.writeValue(u);
+//        }
+//        jsonWriter.flush();
+//        jsonWriter.endObject();
+//        jsonReader.endObject();
+
+        jsonWriter.close();
+        jsonReader.close();
+        fos.close();
+
+    }
+
+    @Test
+    void testJSONFieldAnnotation(){
+        String json = this.getJsonString();
+        List<User2> user2 = JSON.parseArray(json,User2.class);
+        System.out.println(user2);  //[User2(newName=lhw, newAge=18, newAddress=gz), User2(newName=hw, newAge=19, newAddress=hz)]
+
+        //解析后的属性顺序根据User2类中定义的Ordinal顺序排序
+        String str = JSON.toJSONString(user2);
+        System.out.println(str);  //[{"age":18,"userName":"lhw"},{"age":19,"userName":"hw"}]
 
     }
 
