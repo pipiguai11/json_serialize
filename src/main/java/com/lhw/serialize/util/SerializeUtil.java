@@ -13,7 +13,7 @@ public class SerializeUtil {
 
     static {
         globalInstance.put(Double.class, new MyDoubleSerializer(new DecimalFormat("0.00")));
-        //globalInstance.put(Classroom.class,new MyClassroomSerializer());
+        globalInstance.put(Classroom.class,new MyClassroomSerializer());
     }
 
     public static class MyDoubleSerializer extends DoubleSerializer{

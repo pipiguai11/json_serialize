@@ -18,7 +18,7 @@ public class PrintUtil {
         System.out.println("------------------------------------------------------------------------");
         System.out.println("没有任何的格式化：");
         System.out.println(o1);
-        System.out.println("【" + message + "】操作");
+        System.out.println("执行【" + message + "】操作");
         System.out.println(o2);
         System.out.println();
     }
