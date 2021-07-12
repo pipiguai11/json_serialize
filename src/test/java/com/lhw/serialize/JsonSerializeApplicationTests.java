@@ -5,7 +5,6 @@ import com.alibaba.fastjson.serializer.*;
 import com.lhw.serialize.model.Classroom;
 import com.lhw.serialize.model.User;
 import com.lhw.serialize.model.User2;
-import com.lhw.serialize.util.FileUtil;
 import com.lhw.serialize.util.PrintUtil;
 import com.lhw.serialize.util.SerializeUtil;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,8 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SpringBootTest
 class JsonSerializeApplicationTests {
@@ -326,7 +327,7 @@ class JsonSerializeApplicationTests {
         System.out.println("处理超大json文本用时 ：" + (System.currentTimeMillis()-start));
 
         //性能对比
-        String json = getJsonString();
+        String json = getJsonString(JSON_DATA_PATH);
         FileOutputStream fos = new FileOutputStream("E:\\temp\\" + new Random().nextInt(100) + ".txt");
         long start2 = System.currentTimeMillis();
         List<User> users = JSON.parseArray(json,User.class);
@@ -357,7 +358,7 @@ class JsonSerializeApplicationTests {
 
     @Test
     void testJSONFieldAnnotation(){
-        String json = this.getJsonString();
+        String json = this.getJsonString(JSON_DATA_PATH);
         List<User2> user2 = JSON.parseArray(json,User2.class);
         System.out.println(user2);  //[User2(newName=lhw, newAge=18, newAddress=gz), User2(newName=hw, newAge=19, newAddress=hz)]
 
@@ -371,9 +372,9 @@ class JsonSerializeApplicationTests {
     /**
      * 从template/file目录中读取文件并输出
      */
-    private String getJsonString(){
+    private String getJsonString(String path){
         try {
-            InputStream in = new ClassPathResource(JSON_DATA_PATH).getInputStream();
+            InputStream in = new ClassPathResource(path).getInputStream();
             byte[] b = new byte[4];
             StringBuffer sb = new StringBuffer();
             int len = -1;
@@ -416,6 +417,16 @@ class JsonSerializeApplicationTests {
         map.put("user3",user3);
         map.put("list",users);
         classroom.setMap(map);
+    }
+
+    @Test
+    void testPattern(){
+        //只能输入汉字
+        Pattern pattern = Pattern.compile("^[\\u4e00-\\u9fa5]{0,}$");
+        Matcher matcher = pattern.matcher("韩文");
+        Matcher matcher1 = pattern.matcher("hanwen");
+        System.out.println(matcher.matches());
+        System.out.println(matcher1.matches());
     }
 
 }
